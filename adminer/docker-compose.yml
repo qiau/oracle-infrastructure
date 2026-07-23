@@ -1,0 +1,17 @@
+services:
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    networks:
+      - proxy
+      - oshinesia
+
+networks:
+  proxy:
+    external: true
+    name: proxy
+
+  oshinesia:
+    external: true
+    name: oshinesia
