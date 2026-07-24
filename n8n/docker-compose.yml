@@ -7,14 +7,17 @@ services:
     env_file:
       - .env
 
-    ports:
-      - "5678:5678"
-
     volumes:
       - ./n8n_data:/home/node/.n8n
 
     networks:
       - proxy
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
 
 networks:
   proxy:
