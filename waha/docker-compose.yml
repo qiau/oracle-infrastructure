@@ -1,0 +1,33 @@
+services:
+  waha:
+    image: devlikeapro/waha:gows-arm
+
+    container_name: waha
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./sessions:/app/.sessions
+      - ./media:/app/.media
+
+    networks:
+      - oshinesia
+      - proxy
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+networks:
+  oshinesia:
+    external: true
+    name: oshinesia
+
+  proxy:
+    external: true
+    name: proxy
