@@ -1,0 +1,10 @@
+.git
+
+.env
+.env.\*
+
+**pycache**/
+\*.py[cod]
+
+.vscode/
+.idea/

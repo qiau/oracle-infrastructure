@@ -1,0 +1,3 @@
+httpx
+psycopg[binary]
+python-telegram-bot

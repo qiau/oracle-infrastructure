@@ -1,0 +1,24 @@
+services:
+  telegram:
+    build: .
+
+    container_name: telegram
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    networks:
+      - oshinesia
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+networks:
+  oshinesia:
+    external: true
+    name: oshinesia

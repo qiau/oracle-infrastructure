@@ -1,1 +1,43 @@
+# ==========================
+# Environment
+# ==========================
 .env
+**/.env
+
+.venv/
+venv/
+
+# ==========================
+# PostgreSQL
+# ==========================
+postgres/data/**
+!postgres/data/
+!postgres/data/.gitkeep
+
+postgres/backups/**
+!postgres/backups/
+!postgres/backups/.gitkeep
+
+# ==========================
+# WAHA
+# ==========================
+waha/media/**
+!waha/media/
+!waha/media/.gitkeep
+
+waha/sessions/**
+!waha/sessions/
+!waha/sessions/.gitkeep
+
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================
+# IDE
+# ==========================
+.vscode/
+.idea/
