@@ -5,13 +5,13 @@ services:
     restart: unless-stopped
     networks:
       - proxy
-      - oshinesia
+      - backend
 
 networks:
   proxy:
     external: true
     name: proxy
 
-  oshinesia:
+  backend:
     external: true
-    name: oshinesia
+    name: backend

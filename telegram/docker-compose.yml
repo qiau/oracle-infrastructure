@@ -10,7 +10,7 @@ services:
       - .env
 
     networks:
-      - oshinesia
+      - backend
 
     logging:
       driver: json-file
@@ -19,6 +19,6 @@ services:
         max-file: "10"
 
 networks:
-  oshinesia:
+  backend:
     external: true
-    name: oshinesia
+    name: backend

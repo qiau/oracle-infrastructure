@@ -14,8 +14,8 @@ services:
       - ./media:/app/.media
 
     networks:
-      - oshinesia
       - proxy
+      - backend
 
     logging:
       driver: json-file
@@ -24,10 +24,10 @@ services:
         max-file: "10"
 
 networks:
-  oshinesia:
-    external: true
-    name: oshinesia
-
   proxy:
     external: true
     name: proxy
+
+  backend:
+    external: true
+    name: backend
