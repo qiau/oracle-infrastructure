@@ -22,8 +22,10 @@ services:
     cap_drop:
       - ALL
     networks:
-      - proxy
+      # - proxy
       - backend
+    ports:
+      - "8081:8080"
 
   nitter-redis:
     container_name: nitter-redis
@@ -50,9 +52,9 @@ volumes:
   nitter-redis:
 
 networks:
-  proxy:
-    external: true
-    name: proxy
+  # proxy:
+  #   external: true
+  #   name: proxy
 
   backend:
     external: true
