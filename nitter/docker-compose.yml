@@ -42,6 +42,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    networks:
+      - backend
 
 volumes:
   nitter-redis:
