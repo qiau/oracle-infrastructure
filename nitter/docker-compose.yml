@@ -22,6 +22,7 @@ services:
     cap_drop:
       - ALL
     networks:
+      - proxy
       - backend
 
   nitter-redis:
@@ -49,6 +50,10 @@ volumes:
   nitter-redis:
 
 networks:
+  proxy:
+    external: true
+    name: proxy
+
   backend:
     external: true
     name: backend
