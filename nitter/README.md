@@ -35,6 +35,13 @@ Customize other options of this config file to your liking
 
 Follow Nitter's [guide on obtaining credentials](https://github.com/zedeus/nitter/wiki/Creating-session-tokens)
 
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 create_session_browser.py USERNAME 'password' --append ../sessions.jsonl
+```
+
 Place the resulting `sessions.jsonl` to the directory you were working in from the previous step
 
 ### 4. Run Nitter
