@@ -1,9 +1,7 @@
 services:
   waha:
-    image: devlikeapro/waha:gows-arm
-
     container_name: waha
-
+    image: devlikeapro/waha:gows-arm
     restart: unless-stopped
 
     env_file:
@@ -20,8 +18,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
 networks:
   proxy:
