@@ -1,7 +1,7 @@
 services:
   n8n:
-    image: docker.n8n.io/n8nio/n8n
     container_name: n8n
+    image: docker.n8n.io/n8nio/n8n
     restart: unless-stopped
 
     env_file:
@@ -16,8 +16,8 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "100m"
-        max-file: "10"
+        max-size: "20m"
+        max-file: "5"
 
 networks:
   proxy:

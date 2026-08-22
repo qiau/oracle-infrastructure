@@ -1,12 +1,13 @@
 services:
   nitter:
     container_name: nitter
-    image: zedeus/nitter:latest-arm64
+    image: zedeus/nitter:latest
     restart: unless-stopped
 
     volumes:
       - ./nitter.conf:/src/nitter.conf:Z,ro
       - ./sessions.jsonl:/src/sessions.jsonl:Z,ro # Run get_sessions.py to get the credentials
+
     depends_on:
       - nitter-redis
 
@@ -15,37 +16,61 @@ services:
       interval: 30s
       timeout: 5s
       retries: 2
+
     user: "998:998"
     read_only: true
+
     security_opt:
       - no-new-privileges:true
+
     cap_drop:
       - ALL
+
     networks:
       - backend
+
     ports:
-      - "8081:8080"
+      - "8081:8080" #port tailscale untuk monitoring apakah nitter berjalan atau tidak
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
 
   nitter-redis:
     container_name: nitter-redis
     image: redis:6-alpine
     restart: unless-stopped
+
     command: redis-server --save 60 1 --loglevel warning
+
     volumes:
       - nitter-redis:/data
+
     healthcheck:
       test: redis-cli ping
       interval: 30s
       timeout: 5s
       retries: 2
+
     user: "999:1000"
     read_only: true
+
     security_opt:
       - no-new-privileges:true
+
     cap_drop:
       - ALL
+
     networks:
       - backend
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
 
 volumes:
   nitter-redis:

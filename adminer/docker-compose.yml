@@ -1,11 +1,18 @@
 services:
   adminer:
-    image: adminer:latest
     container_name: adminer
+    image: adminer:latest
     restart: unless-stopped
+
     networks:
       - proxy
       - backend
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
 
 networks:
   proxy:

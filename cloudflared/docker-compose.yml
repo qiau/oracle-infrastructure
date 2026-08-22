@@ -1,13 +1,22 @@
 services:
   cloudflared:
-    image: cloudflare/cloudflared:latest
     container_name: cloudflared
+    image: cloudflare/cloudflared:latest
     restart: unless-stopped
+
     command: tunnel --no-autoupdate run
+
     environment:
       TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+
     networks:
       - proxy
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
 
 networks:
   proxy:
