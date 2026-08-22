@@ -12,6 +12,7 @@ services:
 
     networks:
       - proxy
+      - backend
 
     logging:
       driver: json-file
@@ -23,3 +24,7 @@ networks:
   proxy:
     external: true
     name: proxy
+
+  backend:
+    external: true
+    name: backend
