@@ -15,6 +15,12 @@ services:
     networks:
       - backend
 
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
 networks:
   backend:
     external: true
