@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: postgres
+    container_name: postgres-18
     image: postgres:18-trixie
     restart: unless-stopped
 
