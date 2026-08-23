@@ -7,9 +7,6 @@ def create_app():
     app = (
         ApplicationBuilder()
         .token(ADMIN_BOT_TOKEN)
-        .base_url("http://telegram-bot-api:8081/bot")
-        .base_file_url("http://telegram-bot-api:8081/file/bot")
-        .local_mode(True)
         .build()
     )
     register_commands(app)
