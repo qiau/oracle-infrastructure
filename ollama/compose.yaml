@@ -4,9 +4,6 @@ services:
     image: ollama/ollama
     restart: unless-stopped
 
-    ports: 
-      - "11434:11434" # untuk testing
-
     volumes:
       - ./data:/root/.ollama
 
