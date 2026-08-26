@@ -10,8 +10,8 @@ services:
       # Media Social Sender
       - /home/ubuntu/oshinesia/oshinesia-social-sender/media:/media/social-sender:ro
 
-      # Media Telegram Relay
-      - /home/ubuntu/oshinesia/oshinesia-telegram-relay/media:/media/telegram-relay:ro
+      # Media Telegram Autobackup
+      - /home/ubuntu/oshinesia/oshinesia-telegram-autobackup/media:/media/telegram-autobackup:ro
 
     networks:
       - nginx
