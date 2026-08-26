@@ -1,0 +1,30 @@
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:stable-alpine
+    restart: unless-stopped
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+      # Media project feed
+      - /home/ubuntu/oshinesia/vps-oshinesia-feed/storage/media:/media/feed:ro
+
+      # Media Telegram Relay
+      - /home/ubuntu/oshinesia/oshinesia-telegram-relay/storage/media:/media/telegram:ro
+
+    networks:
+      - proxy
+      - nginx
+
+networks:
+  nginx:
+    external: true
+    name: nginx
+
+  proxy:
+    external: true
+    name: proxy

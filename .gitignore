@@ -30,9 +30,9 @@ waha/sessions/**
 !waha/sessions/.gitkeep
 
 # ==========================
-# NITTER
+# Configuration files
 # ==========================
-nitter.conf
+*.conf
 
 # ==========================
 # Python
