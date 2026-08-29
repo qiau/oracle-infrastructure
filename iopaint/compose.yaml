@@ -1,0 +1,34 @@
+services:
+  iopaint:
+    build: .
+
+    container_name: iopaint
+
+    restart: unless-stopped
+
+    ports:
+      - "8083:8083"
+
+    networks:
+      - iopaint
+
+    cpus: "1.5"
+    mem_limit: 4g
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/api/v1/server-config"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+networks:
+  iopaint:
+    external: true
+    name: iopaint
