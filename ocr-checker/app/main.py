@@ -1,32 +1,45 @@
 import os
-import sys
+import json
 import asyncio
 from pathlib import Path
 
 from telethon import TelegramClient
-from telethon.errors import (
-    AuthKeyUnregisteredError,
-    SessionRevokedError,
-)
 
+from app.telegram_checker import check_channel
 
-# ============================================================
-# CONFIG
-# ============================================================
 
 API_ID = int(os.environ["TELEGRAM_API_ID"])
 API_HASH = os.environ["TELEGRAM_API_HASH"]
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SESSION_PATH = BASE_DIR / "sessions" / "telegram"
+CHANNELS_FILE = BASE_DIR / "config" / "channels.json"
+RESULT_FILE = BASE_DIR / "results" / "result.json"
 
-
-# ============================================================
-# MAIN
-# ============================================================
 
 async def main():
+
+    # --------------------------------------------------------
+    # Load channels
+    # --------------------------------------------------------
+
+    with open(
+        CHANNELS_FILE,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
+        channels = json.load(f)
+
+    print(
+        f"[INFO] Total channel: {len(channels)}"
+    )
+
+    # --------------------------------------------------------
+    # Telegram
+    # --------------------------------------------------------
 
     client = TelegramClient(
         str(SESSION_PATH),
@@ -34,105 +47,90 @@ async def main():
         API_HASH,
     )
 
-    try:
+    await client.connect()
 
-        print("[INFO] Menghubungkan ke Telegram...")
-
-        await client.connect()
-
-        # ----------------------------------------------------
-        # Cek session
-        # ----------------------------------------------------
-
-        if not await client.is_user_authorized():
-
-            print()
-            print("=" * 60)
-            print("[ERROR] Telegram session tidak valid!")
-            print()
-            print("Silakan login terlebih dahulu dengan:")
-            print()
-            print(
-                "docker compose run --rm ocr-checker "
-                "python -m app.login"
-            )
-            print()
-            print("Setelah login berhasil, jalankan:")
-            print()
-            print("docker compose up -d")
-            print("=" * 60)
-
-            return 1
-
-        # ----------------------------------------------------
-        # Ambil informasi akun
-        # ----------------------------------------------------
-
-        me = await client.get_me()
-
-        account_name = (
-            me.username
-            or me.first_name
-            or str(me.id)
-        )
-
-        print(
-            f"[INFO] Telegram login valid: {account_name}"
-        )
-
-        # ----------------------------------------------------
-        # TODO:
-        # Jalankan sistem checker di sini
-        # ----------------------------------------------------
-
-        print("[INFO] Telegram checker siap dijalankan.")
-
-        return 0
-
-    except (
-        AuthKeyUnregisteredError,
-        SessionRevokedError,
-    ):
+    if not await client.is_user_authorized():
 
         print()
         print("=" * 60)
-        print("[ERROR] Telegram session sudah tidak valid!")
-        print()
-        print("Silakan login ulang dengan:")
+        print("[ERROR] Telegram session tidak valid!")
         print()
         print(
-            "docker compose run --rm ocr-checker "
-            "python -m app.login"
+            "Silakan login dengan:"
         )
-        print()
-        print("Setelah login berhasil, jalankan:")
-        print()
-        print("docker compose up -d")
+        print(
+            "docker compose run --rm "
+            "ocr-checker python -m app.login"
+        )
         print("=" * 60)
-
-        return 1
-
-    except Exception as e:
-
-        print()
-        print("=" * 60)
-        print("[ERROR] Gagal terhubung ke Telegram")
-        print(f"[ERROR] {type(e).__name__}: {e}")
-        print("=" * 60)
-
-        return 1
-
-    finally:
 
         await client.disconnect()
 
+        return 1
 
-# ============================================================
-# ENTRY POINT
-# ============================================================
+    # --------------------------------------------------------
+    # Check channels
+    # --------------------------------------------------------
+
+    for channel in channels:
+
+        result = await check_channel(
+            client,
+            channel["id"],
+            channel["name"]
+        )
+
+        if result["found"]:
+
+            output = {
+                "channel": channel["name"],
+                "channel_id": channel["id"],
+                "message_id": result["message_id"],
+                "date": result["date"],
+            }
+
+            RESULT_FILE.parent.mkdir(
+                parents=True,
+                exist_ok=True
+            )
+
+            with open(
+                RESULT_FILE,
+                "w",
+                encoding="utf-8"
+            ) as f:
+
+                json.dump(
+                    output,
+                    f,
+                    ensure_ascii=False,
+                    indent=2
+                )
+
+            print()
+            print("[INFO] Raffz ditemukan.")
+            print(
+                f"[INFO] Hasil: {RESULT_FILE}"
+            )
+
+            await client.disconnect()
+
+            return 0
+
+    # --------------------------------------------------------
+    # Tidak ditemukan
+    # --------------------------------------------------------
+
+    print()
+    print("[INFO] Raffz tidak ditemukan di semua channel.")
+
+    await client.disconnect()
+
+    return 0
+
 
 if __name__ == "__main__":
 
-    exit_code = asyncio.run(main())
-
-    sys.exit(exit_code)
+    raise SystemExit(
+        asyncio.run(main())
+    )
