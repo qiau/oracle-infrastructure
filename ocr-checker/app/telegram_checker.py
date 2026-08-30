@@ -1,5 +1,6 @@
 import asyncio
 from io import BytesIO
+from zoneinfo import ZoneInfo
 
 from telethon.errors import FloodWaitError
 
@@ -126,7 +127,9 @@ async def check_channel(
                     return {
                         "found": True,
                         "message_id": message.id,
-                        "date": message.date.isoformat(),
+                        "date": message.date.astimezone(
+                            ZoneInfo("Asia/Jakarta")
+                        ).strftime("%Y-%m-%d %H:%M:%S"),
                     }
 
             # ------------------------------------------------
