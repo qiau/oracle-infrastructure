@@ -14,10 +14,8 @@ services:
     networks:
       - ollama
 
-    deploy:
-      resources:
-        limits:
-          memory: 2G
+    cpus: "1"
+    mem_limit: 2g
 
     logging:
       driver: json-file
