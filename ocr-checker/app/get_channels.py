@@ -20,6 +20,8 @@ CONFIG_DIR.mkdir(
     exist_ok=True
 )
 
+TARGET_NAME = "pm"
+
 
 async def main():
 
@@ -39,14 +41,16 @@ async def main():
             "Jalankan terlebih dahulu:"
         )
         print(
-            "docker compose run --rm ocr-checker "
-            "python -m app.login"
+            "docker compose run --rm "
+            "ocr-checker python -m app.login"
         )
 
         await client.disconnect()
         return 1
 
-    print("[INFO] Mengambil daftar channel...")
+    print(
+        f'[INFO] Mencari channel dengan nama mengandung "{TARGET_NAME}"...'
+    )
 
     channels = []
 
@@ -54,18 +58,19 @@ async def main():
 
         entity = dialog.entity
 
-        # Hanya channel Telegram
+        # Hanya channel/broadcast
         if not getattr(entity, "broadcast", False):
             continue
 
+        channel_name = dialog.name or ""
+
+        # Filter nama, case-insensitive
+        if TARGET_NAME.lower() not in channel_name.lower():
+            continue
+
         channels.append({
-            "name": dialog.name,
+            "name": channel_name,
             "id": entity.id,
-            "username": getattr(
-                entity,
-                "username",
-                None
-            ),
         })
 
     with open(
@@ -84,6 +89,12 @@ async def main():
     print(
         f"[INFO] Ditemukan {len(channels)} channel."
     )
+
+    for channel in channels:
+        print(
+            f'  - {channel["name"]} '
+            f'({channel["id"]})'
+        )
 
     print(
         f"[INFO] Disimpan ke: {CHANNELS_FILE}"
