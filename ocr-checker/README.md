@@ -90,7 +90,7 @@ Session ini memungkinkan aplikasi terhubung kembali ke Telegram tanpa melakukan 
 Jika session belum tersedia, jalankan:
 
 ```bash
-docker compose run --rm checker python -m app.login
+docker compose run --rm ocr-checker python -m app.login
 ```
 
 Telethon kemudian akan meminta:
@@ -128,7 +128,7 @@ langsung saja.
 Jika session **expired, revoked, logout, atau tidak valid**, jalankan:
 
 ```bash
-docker compose run --rm checker python -m app.login
+docker compose run --rm ocr-checker python -m app.login
 ```
 
 Setelah login berhasil dan `sessions/telegram.session` sudah diperbarui:
@@ -149,7 +149,7 @@ Checker berjalan
 
 Session invalid / belum ada
     ↓
-docker compose run --rm checker python -m app.login
+docker compose run --rm ocr-checker python -m app.login
     ↓
 Login Telegram
     ↓
@@ -179,7 +179,7 @@ docker compose ps
 Melihat log:
 
 ```bash
-docker compose logs -f checker
+docker compose logs -f ocr-checker
 ```
 
 Menghentikan aplikasi:
@@ -191,7 +191,7 @@ docker compose down
 Restart:
 
 ```bash
-docker compose restart checker
+docker compose restart ocr-checker
 ```
 
 ---
@@ -276,7 +276,7 @@ __pycache__/
 Jika session belum ada:
 
 ```bash
-docker compose run --rm checker python -m app.login
+docker compose run --rm ocr-checker python -m app.login
 ```
 
 Setelah login berhasil:
@@ -294,6 +294,6 @@ docker compose up -d
 Jika session kemudian menjadi invalid:
 
 ```bash
-docker compose run --rm checker python -m app.login
+docker compose run --rm ocr-checker python -m app.login
 docker compose up -d
 ```
