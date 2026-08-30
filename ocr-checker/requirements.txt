@@ -1,0 +1,4 @@
+telethon
+opencv-python-headless
+pytesseract
+numpy

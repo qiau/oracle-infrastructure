@@ -1,0 +1,19 @@
+services:
+  ocr-checker:
+    build: .
+    container_name: ocr-checker
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./sessions:/app/sessions
+      - ./results:/app/results
+      - ./config:/app/config
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
