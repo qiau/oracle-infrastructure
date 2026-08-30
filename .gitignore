@@ -8,26 +8,16 @@
 venv/
 
 # ==========================
-# PostgreSQL
+# OCR Checker
 # ==========================
-postgres/data/**
-!postgres/data/
-!postgres/data/.gitkeep
+ocr-checker/config/**
+!ocr-checker/config/.gitkeep
 
-postgres/backups/**
-!postgres/backups/
-!postgres/backups/.gitkeep
+ocr-checker/result/**
+!ocr-checker/result/.gitkeep
 
-# ==========================
-# WAHA
-# ==========================
-waha/media/**
-!waha/media/
-!waha/media/.gitkeep
-
-waha/sessions/**
-!waha/sessions/
-!waha/sessions/.gitkeep
+ocr-checker/sessions/**
+!ocr-checker/sessions/.gitkeep
 
 # ==========================
 # Configuration files
