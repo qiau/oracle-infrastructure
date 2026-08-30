@@ -2,7 +2,6 @@ services:
   ocr-checker:
     build: .
     container_name: ocr-checker
-    restart: unless-stopped
 
     env_file:
       - .env

@@ -1,188 +1,109 @@
 # OCR Checker
 
-Sistem untuk memeriksa gambar dari channel Telegram dan mendeteksi teks tertentu menggunakan **Tesseract OCR**.
+Checker gambar dari channel Telegram menggunakan **Tesseract OCR** untuk mendeteksi teks target.
 
-Aplikasi berjalan sepenuhnya di Docker sehingga VPS host tidak perlu menginstall Python, virtual environment, Tesseract, atau dependency OCR secara langsung.
+Semua aplikasi berjalan di Docker. VPS host hanya membutuhkan Docker & Docker Compose.
 
-## Struktur Project
+## Struktur
 
 ```text
 ocr-checker/
 ├── app/
 │   ├── login.py
-│   └── ...
-│
+│   ├── get_channels.py
+│   └── main.py
 ├── config/
 │   └── channels.json
-│
 ├── sessions/
 │   └── telegram.session
-│
 ├── results/
-│   └── ...
-│
 ├── .env
-├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
 ```
 
-### Folder
+- `app/` → source code
+- `config/` → konfigurasi channel
+- `sessions/` → Telegram session
+- `results/` → hasil checker
 
-| Folder      | Fungsi                                  |
-| ----------- | --------------------------------------- |
-| `app/`      | Source code aplikasi                    |
-| `config/`   | Konfigurasi channel yang akan diperiksa |
-| `sessions/` | Session Telegram                        |
-| `results/`  | Hasil proses checker                    |
+## Environment
 
-> File session Telegram bersifat sensitif. Jangan commit ke Git.
-
----
-
-## Konfigurasi Environment
-
-Buat file `.env` di root project:
+Buat `.env`:
 
 ```env
 TELEGRAM_API_ID=12345678
 TELEGRAM_API_HASH=xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-`API_ID` dan `API_HASH` digunakan oleh Telethon untuk terhubung ke Telegram.
+Jangan commit `.env` atau `sessions/telegram.session`.
 
-Jangan masukkan `.env` ke repository.
+## Setup Pertama Kali
 
----
-
-## Instalasi
-
-Pastikan VPS sudah memiliki:
-
-- Docker
-- Docker Compose
-
-Tidak perlu membuat Python virtual environment di host.
-
-Build image:
+### 1. Login Telegram
 
 ```bash
-docker compose build
+docker compose run --rm ocr-checker python -m app.login
 ```
 
-Build hanya diperlukan ketika pertama kali membuat image atau ketika `Dockerfile` / `requirements.txt` berubah.
-
----
-
-# Telegram Session
-
-Aplikasi menggunakan session Telegram yang disimpan di:
+Session akan disimpan ke:
 
 ```text
 sessions/telegram.session
 ```
 
-Session ini memungkinkan aplikasi terhubung kembali ke Telegram tanpa melakukan login OTP setiap kali container dijalankan.
+### 2. Ambil daftar channel
 
-## Membuat Session
-
-Jika session belum tersedia, jalankan:
+Setelah login berhasil:
 
 ```bash
-docker compose run --rm ocr-checker python -m app.login
+docker compose run --rm ocr-checker python -m app.get_channels
 ```
 
-Telethon kemudian akan meminta:
-
-1. Nomor Telegram
-2. OTP Telegram
-3. Password 2FA jika akun menggunakan 2FA
-
-Setelah login berhasil, session akan tersimpan di:
+Daftar channel akan disimpan ke:
 
 ```text
-sessions/telegram.session
+config/channels.json
 ```
 
-Kemudian jalankan worker:
+### 3. Jalankan Checker
 
 ```bash
 docker compose up -d
 ```
 
----
+## Session Telegram Invalid
 
-# ⚠️ Jika Session Telegram Invalid
-
-**Jangan langsung menjalankan `app.login` setiap kali aplikasi dijalankan.**
-
-Jika session masih valid:
-
-```bash
-docker compose up -d
-```
-
-langsung saja.
-
-Jika session **expired, revoked, logout, atau tidak valid**, jalankan:
+Jika session sudah expired, revoked, atau logout:
 
 ```bash
 docker compose run --rm ocr-checker python -m app.login
 ```
 
-Setelah login berhasil dan `sessions/telegram.session` sudah diperbarui:
+Setelah login berhasil:
 
 ```bash
 docker compose up -d
 ```
 
-### Alur sederhananya
+Jika session valid, **tidak perlu login ulang**.
 
-```text
-Session valid
-    ↓
-docker compose up -d
-    ↓
-Checker berjalan
+## Monitoring
 
-
-Session invalid / belum ada
-    ↓
-docker compose run --rm ocr-checker python -m app.login
-    ↓
-Login Telegram
-    ↓
-sessions/telegram.session dibuat/diperbarui
-    ↓
-docker compose up -d
-    ↓
-Checker berjalan
-```
-
----
-
-# Menjalankan Aplikasi
-
-Setelah session Telegram valid:
-
-```bash
-docker compose up -d
-```
-
-Melihat status container:
+Lihat status:
 
 ```bash
 docker compose ps
 ```
 
-Melihat log:
+Lihat log:
 
 ```bash
 docker compose logs -f ocr-checker
 ```
 
-Menghentikan aplikasi:
+Stop:
 
 ```bash
 docker compose down
@@ -194,65 +115,19 @@ Restart:
 docker compose restart ocr-checker
 ```
 
----
+## OCR
 
-# Session Tidak Disimpan di Docker Image
-
-Session Telegram disimpan di folder host:
-
-```text
-./sessions/
-```
-
-dan di-mount ke container:
-
-```text
-/app/sessions
-```
-
-Dengan demikian, menghapus atau membuat ulang container tidak menghapus session Telegram.
-
-Contohnya:
-
-```text
-VPS
-│
-├── sessions/
-│   └── telegram.session
-│
-└── Docker
-    │
-    └── checker
-        └── /app/sessions/telegram.session
-```
-
----
-
-# OCR
-
-OCR menggunakan:
+Menggunakan:
 
 - Tesseract OCR
-- English language data
-- pytesseract
+- `pytesseract`
 - OpenCV Headless
 
-Gambar diproses dari bagian yang diperlukan saja untuk mengurangi penggunaan CPU dan memory.
+Gambar diproses langsung di memory dan tidak disimpan permanen ke disk.
 
-Untuk proses checker, gambar tidak perlu disimpan permanen ke disk. Gambar dapat diproses langsung di memory setelah didownload.
+## Keamanan
 
----
-
-# Keamanan
-
-Jangan commit file berikut ke Git:
-
-```text
-.env
-sessions/telegram.session
-```
-
-Contoh `.gitignore`:
+Tambahkan ke `.gitignore`:
 
 ```gitignore
 .env
@@ -267,33 +142,4 @@ __pycache__/
 *.pyc
 ```
 
-**Session Telegram harus diperlakukan seperti credential.** Jangan membagikan file `telegram.session` kepada orang lain.
-
----
-
-# Quick Start
-
-Jika session belum ada:
-
-```bash
-docker compose run --rm ocr-checker python -m app.login
-```
-
-Setelah login berhasil:
-
-```bash
-docker compose up -d
-```
-
-Jika session sudah valid:
-
-```bash
-docker compose up -d
-```
-
-Jika session kemudian menjadi invalid:
-
-```bash
-docker compose run --rm ocr-checker python -m app.login
-docker compose up -d
-```
+**Jangan pernah membagikan `telegram.session` karena file tersebut dapat digunakan untuk mengakses session Telegram.**
