@@ -25,6 +25,15 @@ async def main():
     # Load channels
     # --------------------------------------------------------
 
+    if not CHANNELS_FILE.exists():
+
+        print(
+            f"[ERROR] File channel tidak ditemukan: "
+            f"{CHANNELS_FILE}"
+        )
+
+        return 1
+
     with open(
         CHANNELS_FILE,
         "r",
@@ -69,16 +78,41 @@ async def main():
         return 1
 
     # --------------------------------------------------------
-    # Check channels
+    # Hasil semua channel
     # --------------------------------------------------------
 
-    for channel in channels:
+    results = []
+
+    total = len(channels)
+
+    # --------------------------------------------------------
+    # Check channels satu per satu
+    # --------------------------------------------------------
+
+    for index, channel in enumerate(
+        channels,
+        start=1
+    ):
+
+        print()
+        print("-" * 60)
+
+        print(
+            f"[CHANNEL {index}/{total}] "
+            f"{channel['name']}"
+        )
+
+        print("-" * 60)
 
         result = await check_channel(
             client,
             channel["id"],
             channel["name"]
         )
+
+        # ----------------------------------------------------
+        # Raffz ditemukan
+        # ----------------------------------------------------
 
         if result["found"]:
 
@@ -89,40 +123,79 @@ async def main():
                 "date": result["date"],
             }
 
-            RESULT_FILE.parent.mkdir(
-                parents=True,
-                exist_ok=True
-            )
+            results.append(output)
 
-            with open(
-                RESULT_FILE,
-                "w",
-                encoding="utf-8"
-            ) as f:
-
-                json.dump(
-                    output,
-                    f,
-                    ensure_ascii=False,
-                    indent=2
-                )
-
-            print()
-            print("[INFO] Raffz ditemukan.")
             print(
-                f"[INFO] Hasil: {RESULT_FILE}"
+                f"[INFO] Raffz ditemukan di "
+                f"{channel['name']}"
             )
 
-            await client.disconnect()
+        # ----------------------------------------------------
+        # Raffz tidak ditemukan
+        # ----------------------------------------------------
 
-            return 0
+        else:
+
+            print(
+                f"[INFO] Raffz tidak ditemukan di "
+                f"{channel['name']}"
+            )
+
+        # ----------------------------------------------------
+        # PENTING:
+        #
+        # Jangan return di sini.
+        #
+        # Setelah satu channel selesai, loop akan otomatis
+        # melanjutkan ke channel berikutnya.
+        # ----------------------------------------------------
 
     # --------------------------------------------------------
-    # Tidak ditemukan
+    # Simpan hasil setelah SEMUA channel selesai
+    # --------------------------------------------------------
+
+    RESULT_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    with open(
+        RESULT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            results,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
+
+    # --------------------------------------------------------
+    # Selesai
     # --------------------------------------------------------
 
     print()
-    print("[INFO] Raffz tidak ditemukan di semua channel.")
+    print("=" * 60)
+
+    print(
+        "[INFO] Semua channel selesai diperiksa."
+    )
+
+    print(
+        f"[INFO] Total channel: {total}"
+    )
+
+    print(
+        f"[INFO] Raffz ditemukan: {len(results)}"
+    )
+
+    print(
+        f"[INFO] Hasil: {RESULT_FILE}"
+    )
+
+    print("=" * 60)
 
     await client.disconnect()
 
