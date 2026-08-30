@@ -9,11 +9,8 @@ services:
     ports:
       - "8083:8083"
 
-    networks:
-      - iopaint
-
-    cpus: "1.5"
-    mem_limit: 4g
+    cpus: "1"
+    mem_limit: 2g
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8083/api/v1/server-config"]
@@ -27,8 +24,3 @@ services:
       options:
         max-size: "20m"
         max-file: "5"
-
-networks:
-  iopaint:
-    external: true
-    name: iopaint
