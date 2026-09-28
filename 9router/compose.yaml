@@ -1,0 +1,18 @@
+services:
+  9router:
+    container_name: 9router
+    image: decocua/9router:latest
+    restart: unless-stopped
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - INITIAL_PASSWORD=${INITIAL_PASSWORD}
+      - REQUIRE_API_KEY=true
+    volumes:
+      - ./data:/app/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy
