@@ -1,7 +1,7 @@
 services:
   9router:
     container_name: 9router
-    image: decocua/9router:latest
+    image: decolua/9router:latest
     restart: unless-stopped
     environment:
       - JWT_SECRET=${JWT_SECRET}
