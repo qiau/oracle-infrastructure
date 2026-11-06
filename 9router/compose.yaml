@@ -4,6 +4,7 @@ services:
     image: decolua/9router:latest
     restart: unless-stopped
     environment:
+      - DATA_DIR=/app/data
       - JWT_SECRET=${JWT_SECRET}
       - API_KEY_SECRET=${API_KEY_SECRET}
       - MACHINE_ID_SALT=${MACHINE_ID_SALT}
