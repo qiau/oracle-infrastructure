@@ -1,0 +1,28 @@
+services:
+  hermes:
+    container_name: hermes
+    image: nousresearch/hermes-agent:latest
+    restart: unless-stopped
+    command: gateway run
+    env_file:
+      - .env
+    volumes:
+      - ./data:/opt/data
+      - ./workspace:/workspace
+    shm_size: "1g"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
+    networks:
+      - hermes
+
+networks:
+  hermes:
+    external: true
+    name: hermes

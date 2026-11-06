@@ -5,14 +5,27 @@ services:
     restart: unless-stopped
     environment:
       - JWT_SECRET=${JWT_SECRET}
+      - API_KEY_SECRET=${API_KEY_SECRET}
+      - MACHINE_ID_SALT=${MACHINE_ID_SALT}
       - INITIAL_PASSWORD=${INITIAL_PASSWORD}
       - REQUIRE_API_KEY=true
+      - AUTH_COOKIE_SECURE=true
     volumes:
       - ./data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     networks:
       - proxy
+      - hermes
 
 networks:
   proxy:
     external: true
     name: proxy
+  hermes:
+    external: true
+    name: hermes
