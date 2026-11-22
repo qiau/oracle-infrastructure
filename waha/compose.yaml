@@ -12,7 +12,7 @@ services:
       - ./media:/app/.media
 
     networks:
-      - proxy
+      - prod-single
       - backend
 
     logging:
@@ -22,9 +22,9 @@ services:
         max-file: "5"
 
 networks:
-  proxy:
+  prod-single:
     external: true
-    name: proxy
+    name: prod-single
 
   backend:
     external: true

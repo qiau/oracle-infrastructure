@@ -14,7 +14,7 @@ services:
       - ./beszel_data:/beszel_data
 
     networks:
-      - proxy
+      - prod-single
 
     logging:
       driver: json-file
@@ -48,6 +48,6 @@ services:
         max-file: "5"
 
 networks:
-  proxy:
+  prod-single:
     external: true
-    name: proxy
+    name: prod-single

@@ -20,13 +20,13 @@ services:
         limits:
           memory: 1G
     networks:
-      - proxy
+      - prod-single
       - hermes
 
 networks:
-  proxy:
+  prod-single:
     external: true
-    name: proxy
+    name: prod-single
   hermes:
     external: true
     name: hermes
